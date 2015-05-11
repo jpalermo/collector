@@ -5,10 +5,10 @@ require "set"
 
 require "rubygems"
 require "bundler/setup"
+Bundler.require
 
-require "eventmachine"
 require "cf_message_bus/message_bus"
-require "vcap/rolling_metric"
+require_relative "../vendor/vcap-common/lib/vcap/rolling_metric"
 
 require "collector/config"
 require "collector/handler"
@@ -122,7 +122,7 @@ module Collector
     def fetch_varz
       fetch(:varz) do |resp, job, instance|
         index = instance[:index]
-        varz = Yajl::Parser.parse(resp)
+        varz = MultiJson.load(resp)
         now = Time.now.to_i
 
         handler = Handler.handler(@historian, job)

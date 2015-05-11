@@ -51,7 +51,7 @@ module Collector
         start = Time.now
         EM.defer do
           Config.logger.debug("Sending metrics to datadog: [#{metrics.inspect}]")
-          body = Yajl::Encoder.encode({ series: metrics })
+          body = MultiJson.dump({ series: metrics })
           response = @http_client.post("https://app.datadoghq.com/api/v1/series", query: {api_key: @api_key}, body: body, headers: {"Content-type" => "application/json"})
           if response.success?
             Config.logger.info("collector.emit-datadog.success", number_of_metrics: metrics.count, lag_in_seconds: Time.now - start)
